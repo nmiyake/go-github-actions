@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: dist-output
-          path: out/dist
+          path: out
 
   publish:
     runs-on: ubuntu-latest
@@ -77,7 +77,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: dist-output
-          path: out/dist
+          path: out
       - run: if [[ -d out ]]; then find out -exec touch {} \;; fi
       - run: ./godelw publish maven-local
         env:
