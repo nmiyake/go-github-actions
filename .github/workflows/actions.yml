@@ -78,6 +78,7 @@ jobs:
         with:
           name: dist-output
           path: out/dist
+      - run: if [[ -d out ]]; then find out -exec touch {} \;; fi
       - run: ./godelw publish maven-local
         env:
           GOPATH: "/home/runner/go"
