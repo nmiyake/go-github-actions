@@ -24,3 +24,60 @@ jobs:
       - run: ./godelw verify --apply=false
         env:
           GOPATH: "/home/runner/go"
+
+  dist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16.4'
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.godel
+          key: ${{ runner.os }}-godel-${{ hashFiles('godelw', 'godel/config/godel.yml') }}
+      - run: ./godelw dist
+        env:
+          GOPATH: "/home/runner/go"
+      - name: Upload dist artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist-output
+          path: out/dist
+
+  publish:
+    runs-on: ubuntu-latest
+    needs:
+      - verify
+      - dist
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16.4'
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.godel
+          key: ${{ runner.os }}-godel-${{ hashFiles('godelw', 'godel/config/godel.yml') }}
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: dist-output
+          path: out/dist
+      - run: ./godelw publish github --dry-run --add-v-prefix --api-url=$GITHUB_API_URL --user=palantir --repository=godel-mod-plugin --token=${{ secrets.GITHUB_TOKEN }}
+        env:
+          GOPATH: "/home/runner/go"
