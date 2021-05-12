@@ -18,6 +18,8 @@ jobs:
           path: |
             ~/go/pkg/mod
             ~/.cache/go-build
+            ~/Library/Caches/go-build
+            %LocalAppData%\go-build
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
       - uses: actions/cache@v2
         with:
@@ -25,8 +27,6 @@ jobs:
             ~/.godel
           key: ${{ runner.os }}-godel-${{ hashFiles('godelw', 'godel/config/godel.yml') }}
       - run: ./godelw verify --apply=false
-        env:
-          GOPATH: "/home/runner/go"
 
   dist:
     runs-on: ubuntu-latest
@@ -40,6 +40,8 @@ jobs:
           path: |
             ~/go/pkg/mod
             ~/.cache/go-build
+            ~/Library/Caches/go-build
+            %LocalAppData%\go-build
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
       - uses: actions/cache@v2
         with:
@@ -47,8 +49,6 @@ jobs:
             ~/.godel
           key: ${{ runner.os }}-godel-${{ hashFiles('godelw', 'godel/config/godel.yml') }}
       - run: ./godelw dist
-        env:
-          GOPATH: "/home/runner/go"
       - name: Upload dist artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -71,6 +71,8 @@ jobs:
           path: |
             ~/go/pkg/mod
             ~/.cache/go-build
+            ~/Library/Caches/go-build
+            %LocalAppData%\go-build
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
       - uses: actions/cache@v2
         with:
@@ -84,5 +86,3 @@ jobs:
           path: out
       - run: if [[ -d out ]]; then find out -exec touch {} \;; fi
       - run: ./godelw publish maven-local
-        env:
-          GOPATH: "/home/runner/go"
