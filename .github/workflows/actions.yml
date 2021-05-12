@@ -1,7 +1,7 @@
 name: actions
 
 on:
-  push
+  push:
   release:
     types: [published]
 
