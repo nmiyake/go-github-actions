@@ -58,7 +58,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    if: github.event.release.action == 'published'
+    if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
     needs:
       - verify
       - dist
