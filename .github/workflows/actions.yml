@@ -1,6 +1,9 @@
 name: actions
 
-on: [push]
+on:
+  push
+  release:
+    types: [published]
 
 jobs:
   verify:
@@ -54,6 +57,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
+    if: github.event.release.action == 'published'
     needs:
       - verify
       - dist
