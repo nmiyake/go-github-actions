@@ -10,8 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - id: Run godel command
-        uses: ./.github/actions/run-godel-command
+      - uses: ./.github/actions/run-godel-command
         with:
           go-version: '1.16.4'
           godel-command: 'verify --apply=false'
