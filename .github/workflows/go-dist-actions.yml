@@ -11,6 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: which go
+      - run: ls -la /usr/bin/go
       - id: setup-go
         uses: ./.github/actions/my-action
       - run: go version
