@@ -10,85 +10,86 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - id: foo
+      - id: setup-go
         uses: ./.github/actions/my-action
-        with:
-          who-to-greet: 'Mona the Octocat'
-      - run: echo random-number ${{ steps.foo.outputs.random-number }}
-        shell: bash
-      - uses: actions/setup-go@v2
-        with:
-          go-version: '1.16.4'
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/go/pkg/mod
-            ~/.cache/go-build
-            ~/Library/Caches/go-build
-            %LocalAppData%\go-build
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.godel
-          key: ${{ runner.os }}-godel-${{ hashFiles('godelw', 'godel/config/godel.yml') }}
-      - run: ./godelw verify --apply=false
+      - run: go version
+#        with:
+#          who-to-greet: 'Mona the Octocat'
+#      - run: echo random-number ${{ steps.foo.outputs.random-number }}
+#        shell: bash
+#      - uses: actions/setup-go@v2
+#        with:
+#          go-version: '1.16.4'
+#      - uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/go/pkg/mod
+#            ~/.cache/go-build
+#            ~/Library/Caches/go-build
+#            %LocalAppData%\go-build
+#          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+#      - uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.godel
+#          key: ${{ runner.os }}-godel-${{ hashFiles('godelw', 'godel/config/godel.yml') }}
+#      - run: ./godelw verify --apply=false
 
-  dist:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
-        with:
-          go-version: '1.16.4'
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/go/pkg/mod
-            ~/.cache/go-build
-            ~/Library/Caches/go-build
-            %LocalAppData%\go-build
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.godel
-          key: ${{ runner.os }}-godel-${{ hashFiles('godelw', 'godel/config/godel.yml') }}
-      - run: ./godelw dist
-      - name: Upload dist artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: dist-output
-          path: out
-
-  publish:
-    runs-on: ubuntu-20.04
-    if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
-    needs:
-      - verify
-      - dist
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
-        with:
-          go-version: '1.16.4'
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/go/pkg/mod
-            ~/.cache/go-build
-            ~/Library/Caches/go-build
-            %LocalAppData%\go-build
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.godel
-          key: ${{ runner.os }}-godel-${{ hashFiles('godelw', 'godel/config/godel.yml') }}
-      - name: Download dist artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: dist-output
-          path: out
-      - run: if [[ -d out ]]; then find out -exec touch {} \;; fi
-      - run: ./godelw publish github --add-v-prefix --api-url=$GITHUB_API_URL --user=${{ github.repository_owner }} --repository=${{ github.event.repository.name }} --token=${{ secrets.GITHUB_TOKEN }}
+#  dist:
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions/setup-go@v2
+#        with:
+#          go-version: '1.16.4'
+#      - uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/go/pkg/mod
+#            ~/.cache/go-build
+#            ~/Library/Caches/go-build
+#            %LocalAppData%\go-build
+#          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+#      - uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.godel
+#          key: ${{ runner.os }}-godel-${{ hashFiles('godelw', 'godel/config/godel.yml') }}
+#      - run: ./godelw dist
+#      - name: Upload dist artifacts
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: dist-output
+#          path: out
+#
+#  publish:
+#    runs-on: ubuntu-20.04
+#    if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
+#    needs:
+#      - verify
+#      - dist
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions/setup-go@v2
+#        with:
+#          go-version: '1.16.4'
+#      - uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/go/pkg/mod
+#            ~/.cache/go-build
+#            ~/Library/Caches/go-build
+#            %LocalAppData%\go-build
+#          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+#      - uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.godel
+#          key: ${{ runner.os }}-godel-${{ hashFiles('godelw', 'godel/config/godel.yml') }}
+#      - name: Download dist artifacts
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: dist-output
+#          path: out
+#      - run: if [[ -d out ]]; then find out -exec touch {} \;; fi
+#      - run: ./godelw publish github --add-v-prefix --api-url=$GITHUB_API_URL --user=${{ github.repository_owner }} --repository=${{ github.event.repository.name }} --token=${{ secrets.GITHUB_TOKEN }}

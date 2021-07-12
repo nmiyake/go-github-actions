@@ -1,19 +1,76 @@
-name: 'Hello World'
-description: 'Greet someone'
+name: 'Setup Go'
+description: 'Set up Go distribution'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
-    required: true
-    default: 'World'
-outputs:
-  random-number:
-    description: "Random number"
-    value: ${{ steps.random-number-generator.outputs.random-id }}
+  go-version:
+    description: |
+      If non-empty, this value is written as the Go version (files in the repository/image are not consulted). The
+      version should be of the form specified in a Go distribution's VERSION file (for example, "go1.16.5").
+    required: false
+    default: ""
+  go-version-file:
+    description: |
+      The path to the file that specifies the version of Go that should be used for the project.
+    required: false
+    default: ".palantir/go-version"
+  go-prev-version:
+    description: |
+      If greater than 0, modifies the version of Go that would be used to be the first release of the version of Go that
+      is << parameters.go-prev-version >> minor versions smaller. For example, if the version of Go that would be used
+      is "go1.16.5" and << parameters.go-prev-version >> is 1, the version of Go that will be used will be "go1.15".
+      An error is raised if the subtraction would make the minor version less than 0.
+    required: false
+    default: "0"
+  gopath:
+    description: |
+      The $GOPATH value.
+    required: false
+    default: "/go"
 runs:
   using: "composite"
   steps:
-    - run: echo Hello ${{ inputs.who-to-greet }}.
+    - id: write-go-version-file
       shell: bash
-    - id: random-number-generator
-      run: echo "::set-output name=random-id::$(echo $RANDOM)"
-      shell: bash
+      run: |
+        PARAM_GO_VERSION="${{ inputs.go-version }}"
+        PARAM_GO_VERSION_FILE="${{ inputs.go-version-file }}"
+        PARAM_GO_PREV_VERSION="${{ inputs.go-prev-version }}"
+        PARAM_GOPATH="${{ inputs.gopath }}"
+
+        GO_VERSION_FILE_PATH="${PARAM_GOPATH}/circleci/goversion"
+        FALLBACK_GO_VERSION_FILE="/usr/local/go/VERSION"
+
+        # set Go version
+        GO_VERSION=${PARAM_GO_VERSION}
+        if [ ! -z "${GO_VERSION}" ]; then
+          echo "Go version specified as parameter is ${GO_VERSION}"
+        elif [ -f "${PARAM_REPO_GO_VERSION_FILE}" ]; then
+          GO_VERSION=$(cat "${PARAM_REPO_GO_VERSION_FILE}")
+          echo "Go version specified in ${PARAM_REPO_GO_VERSION_FILE} is ${GO_VERSION}"
+        elif [ -f "${FALLBACK_GO_VERSION_FILE}" ]; then
+          GO_VERSION=$(cat "${FALLBACK_GO_VERSION_FILE}")
+          echo "Go version specified in ${FALLBACK_GO_VERSION_FILE} is ${GO_VERSION}"
+        else
+          echo "Error: Go version was not specified as a parameter and neither ${PARAM_REPO_GO_VERSION_FILE} nor ${FALLBACK_GO_VERSION_FILE} exist"
+          exit 1
+        fi
+
+        if (( PARAM_GO_PREV_VERSION > 0 )); then
+          GO_MINOR_VERSION=$(echo "${GO_VERSION}" | sed 's/^go[0-9][0-9]*\.\([0-9][0-9]*\).*$/\1/')
+          if (( GO_MINOR_VERSION == 0 )); then
+            echo "Decrement operation not supported when minor version is 0"
+            exit 1
+          fi
+
+          (( GO_MINOR_VERSION = GO_MINOR_VERSION - PARAM_GO_PREV_VERSION ))
+          if (( GO_MINOR_VERSION < 0 )); then
+            echo "Minor version cannot be less than 0; was: ${GO_MINOR_VERSION}"
+            exit 1
+          fi
+
+          GO_MAJOR_VERSION=$(echo "${GO_VERSION}" | sed 's/^go\([0-9][0-9]*\).*$/\1/')
+          GO_VERSION="go${GO_MAJOR_VERSION}.${GO_MINOR_VERSION}"
+        fi
+
+        mkdir -p "$(dirname "${GO_VERSION_FILE_PATH}")"
+        echo "Writing ${GO_VERSION} to ${GO_VERSION_FILE_PATH}"
+        printf "%s" "$GO_VERSION" > "${GO_VERSION_FILE_PATH}"
