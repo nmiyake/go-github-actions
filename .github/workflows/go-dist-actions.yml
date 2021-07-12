@@ -17,6 +17,7 @@ jobs:
         uses: ./.github/actions/my-action
         with:
           gopath: /home/runner/go
+          go-prev-version: 1
       - run: go version
 #        with:
 #          who-to-greet: 'Mona the Octocat'
