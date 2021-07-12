@@ -37,7 +37,7 @@ runs:
         PARAM_GOPATH="${{ inputs.gopath }}"
 
         GO_VERSION_FILE_PATH="${PARAM_GOPATH}/circleci/goversion"
-        FALLBACK_GO_VERSION_FILE="/usr/local/go/VERSION"
+        FALLBACK_GO_VERSION_FILE="$(go env GOROOT)"/VERSION
 
         # set Go version
         GO_VERSION=${PARAM_GO_VERSION}
