@@ -10,6 +10,12 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
+      - id: foo
+        uses: ./.github/actions/my-action
+        with:
+          who-to-greet: 'Mona the Octocat'
+      - run: echo random-number ${{ steps.foo.outputs.random-number }}
+        shell: bash
       - uses: actions/setup-go@v2
         with:
           go-version: '1.16.4'
