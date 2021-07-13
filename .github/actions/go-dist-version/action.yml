@@ -30,6 +30,7 @@ runs:
     - id: determine-go-dist-version
       shell: bash
       run: |
+        PARAM_GO_VERSION="${{ inputs.go-version }}"
         PARAM_GO_VERSION_FILE="${{ inputs.go-version-file }}"
         PARAM_GO_PREV_VERSION="${{ inputs.go-prev-version }}"
 
