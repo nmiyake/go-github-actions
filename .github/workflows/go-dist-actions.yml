@@ -32,10 +32,10 @@ jobs:
           echo "::set-output name=GO_DIST_EXISTS::$GO_DIST_EXISTS"
       - run: echo "Cache miss"
         shell: bash
-        if: !steps.go-dist-exists.outputs.GO_DIST_EXISTS
+        if: ${{ !steps.go-dist-exists.outputs.GO_DIST_EXISTS }}
       - run: echo "Cache hit"
         shell: bash
-        if: steps.go-dist-exists.outputs.GO_DIST_EXISTS
+        if: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS }}
 
 #      - uses: actions/cache@v2
 #        if: !go-dist-exists
