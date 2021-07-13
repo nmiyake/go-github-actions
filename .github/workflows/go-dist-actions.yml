@@ -12,6 +12,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: which go
       - run: ls -la /usr/bin/go
+      - run: ls -la /usr/local
       - run: go env
       - run: |
           echo "Path content: ${PATH}"
