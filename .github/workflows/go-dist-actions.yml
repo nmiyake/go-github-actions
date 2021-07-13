@@ -13,6 +13,8 @@ jobs:
       - run: which go
       - run: ls -la /usr/bin/go
       - run: go env
+      - run: |
+          echo "Path content: ${PATH}"
       - id: set-gopath
         run: echo "::set-output name=GOPATH::$(go env GOPATH)"
       - id: go-dist-version
