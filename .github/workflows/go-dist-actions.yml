@@ -15,12 +15,12 @@ jobs:
       - run: which go
       - run: ls -la /usr/bin/go
       - run: go env
+      - id: set-gopath
+        run: echo "::set-output name=GOPATH::$(go env GOPATH)"
       - run: |
-          export GOPATH=$(go env GOPATH)
-      - run: |
-          echo "GOPATH value: $GOPATH"
-      - run: |
-          echo "GOPATH value from go env: $(go env GOPATH)"
+          echo "GOPATH value: ${{ steps.set-gopath.GOPATH }}"
+#      - run: |
+#          echo "GOPATH value from go env: $(go env GOPATH)"
 
 #      - id: go-dist-version
 #        uses: ./.github/actions/go-dist-version
