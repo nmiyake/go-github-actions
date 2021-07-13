@@ -17,6 +17,9 @@ jobs:
       - run: go env
       - run: |
           echo "GOPATH value: $GOPATH"
+      - run: |
+          echo "GOPATH value from go env: $(go env GOPATH)"
+
 #      - id: go-dist-version
 #        uses: ./.github/actions/go-dist-version
 #      - id: go-dist-exists
