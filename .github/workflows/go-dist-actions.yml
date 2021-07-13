@@ -30,7 +30,7 @@ jobs:
         if: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == 0 }}
         uses: ./.github/actions/go-dist-download
         with:
-          gopath: ${{ steps.set-gopath.outputs.GOPATH }}"
+          gopath: ${{ steps.set-gopath.outputs.GOPATH }}
           go-version: ${{ steps.go-dist-version.outputs.go-dist-version }}
       - run: |
           echo "Cache hit: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == 1 }}"
