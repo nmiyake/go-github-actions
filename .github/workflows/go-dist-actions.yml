@@ -8,8 +8,6 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-20.04
-#    env:
-#      DAY_OF_WEEK: Mon
     steps:
       - uses: actions/checkout@v2
       - run: which go
@@ -30,10 +28,12 @@ jobs:
             GO_DIST_EXISTS=1
           fi
           echo "::set-output name=GO_DIST_EXISTS::$GO_DIST_EXISTS"
-      - run: |
-          echo "Cache miss: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == 0 }}"
-        shell: bash
+      - id: download-go-dist
         if: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == 0 }}
+        shell: bash
+        uses: ./.github/actions/go-dist-download
+        with:
+          go-version: ${{ steps.go-dist-version.outputs.go-dist-version }}
       - run: |
           echo "Cache hit: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == 1 }}"
         shell: bash
