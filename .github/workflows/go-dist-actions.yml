@@ -18,7 +18,7 @@ jobs:
       - id: set-gopath
         run: echo "::set-output name=GOPATH::$(go env GOPATH)"
       - run: |
-          echo "GOPATH value: ${{ steps.set-gopath.GOPATH }}"
+          echo "GOPATH value: ${{ steps.set-gopath.outputs.GOPATH }}"
 #      - run: |
 #          echo "GOPATH value from go env: $(go env GOPATH)"
 
