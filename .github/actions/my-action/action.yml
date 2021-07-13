@@ -74,3 +74,25 @@ runs:
         mkdir -p "$(dirname "${GO_VERSION_FILE_PATH}")"
         echo "Writing ${GO_VERSION} to ${GO_VERSION_FILE_PATH}"
         printf "%s" "$GO_VERSION" > "${GO_VERSION_FILE_PATH}"
+
+    - id: write-cache-key-file
+      shell: bash
+      run: |
+        PARAM_GOPATH="${{ inputs.gopath }}"
+
+        # set Go version
+        GO_VERSION_FILE_PATH="${PARAM_GOPATH}/circleci/goversion"
+        GO_VERSION="$(cat ${GO_VERSION_FILE_PATH})"
+        echo "GO_VERSION=${GO_VERSION}"
+
+        # write cache key. Content is based on whether or not required data is already present and the Go version.
+        GO_CACHE_FILE_PATH="${PARAM_GOPATH}/circleci/circleci-cache-key-golang"
+        mkdir -p "$(dirname ${GO_CACHE_FILE_PATH})"
+        CACHE_KEY_FILE_CONTENT=""
+        if [ -d "${PARAM_GOPATH}/go-dists/${GO_VERSION}" ]; then
+          CACHE_KEY_FILE_CONTENT="Empty cache"
+        else
+          CACHE_KEY_FILE_CONTENT="${GO_VERSION}"
+        fi
+        echo "Writing cache key ${CACHE_KEY_FILE_CONTENT} to file ${GO_CACHE_FILE_PATH}"
+        echo "${CACHE_KEY_FILE_CONTENT}" > "${GO_CACHE_FILE_PATH}"
