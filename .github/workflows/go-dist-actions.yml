@@ -16,6 +16,8 @@ jobs:
       - run: ls -la /usr/bin/go
       - run: go env
       - run: |
+          export GOPATH=$(go env GOPATH)
+      - run: |
           echo "GOPATH value: $GOPATH"
       - run: |
           echo "GOPATH value from go env: $(go env GOPATH)"
