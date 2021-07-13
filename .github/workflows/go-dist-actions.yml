@@ -13,11 +13,16 @@ jobs:
       - run: which go
       - run: ls -la /usr/bin/go
       - run: go env
-      - id: setup-go
-        uses: ./.github/actions/my-action
-        with:
-          gopath: /home/runner/go
-      - run: go version
+      - id: go-dist-version
+        uses: ./.github/actions/go-dist-version
+      - run: echo "Go dist version - ${{ steps.go-dist-version.outputs.go-dist-version }}"
+        shell: bash
+
+#      - id: setup-go
+#        uses: ./.github/actions/my-action
+#        with:
+#          gopath: /home/runner/go
+#      - run: go version
 #        with:
 #          who-to-greet: 'Mona the Octocat'
 #      - run: echo random-number ${{ steps.foo.outputs.random-number }}
