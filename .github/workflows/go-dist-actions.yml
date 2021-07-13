@@ -31,7 +31,7 @@ jobs:
         with:
           path: |
             ${{ steps.go-dist-setup.outputs.gopath }}/go-dists/${{ steps.go-dist-setup.outputs.go-dist-version }}
-          key: ${{ steps.go-dist-version.outputs.go-dist-version }}
+          key: ${{ steps.go-dist-setup.outputs.go-dist-version }}
       - id: download-go-dist
         if: steps.restore-go-dist-from-cache.outputs.cache-hit != 'true'
         uses: ./.github/actions/go-dist-download
