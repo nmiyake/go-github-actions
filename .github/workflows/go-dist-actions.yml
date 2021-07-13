@@ -15,8 +15,6 @@ jobs:
       - run: go env
       - id: set-gopath
         run: echo "::set-output name=GOPATH::$(go env GOPATH)"
-      - run: |
-          echo "GOPATH value: ${{ steps.set-gopath.outputs.GOPATH }}"
       - id: go-dist-version
         uses: ./.github/actions/go-dist-version
       - id: go-dist-exists
@@ -32,6 +30,7 @@ jobs:
         if: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == 0 }}
         uses: ./.github/actions/go-dist-download
         with:
+          gopath: ${{ steps.set-gopath.outputs.GOPATH }}"
           go-version: ${{ steps.go-dist-version.outputs.go-dist-version }}
       - run: |
           echo "Cache hit: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == 1 }}"
