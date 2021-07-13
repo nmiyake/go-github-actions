@@ -24,9 +24,10 @@ jobs:
       - id: go-dist-exists
         shell: bash
         run: |
-          GO_DIST_EXISTS=0
+          GO_DIST_EXISTS=false
           if [ -d "${{ steps.set-gopath.outputs.GOPATH }}/go-dists/${{ steps.go-dist-version.outputs.go-dist-version }}" ]; then
-            GO_DIST_EXISTS=1
+            echo "Setting GO_DIST_EXISTS=true"
+            GO_DIST_EXISTS=true
           fi
           echo "::set-output name=GO_DIST_EXISTS::$GO_DIST_EXISTS"
       - run: echo "Cache miss"
