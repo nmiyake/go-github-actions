@@ -31,13 +31,13 @@ jobs:
           fi
           echo "::set-output name=GO_DIST_EXISTS::$GO_DIST_EXISTS"
       - run: |
-          echo "Cache miss: ${{ !steps.go-dist-exists.outputs.GO_DIST_EXISTS }}"
+          echo "Cache miss: ${{ !steps.go-dist-exists.outputs.GO_DIST_EXISTS == "false" }}"
         shell: bash
-        if: ${{ !steps.go-dist-exists.outputs.GO_DIST_EXISTS }}
+        if: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == "false" }}
       - run: |
-          echo "Cache hit: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS }}"
+          echo "Cache hit: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == "true" }}"
         shell: bash
-        if: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS }}
+        if: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == "true" }}
 
 #      - uses: actions/cache@v2
 #        if: !go-dist-exists
