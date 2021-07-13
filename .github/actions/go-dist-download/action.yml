@@ -1,6 +1,10 @@
 name: 'Downloads the Go distribution of the specified version'
 description: 'Downloads the Go distribution of the specified version.'
 inputs:
+  download-dist:
+    description: |
+      If "true", downloads the Go distribution. Otherwise, assumes the Go distribution exists and performs setup.
+    required: true
   gopath:
     description: |
       The $GOPATH value.
@@ -20,6 +24,7 @@ runs:
   using: "composite"
   steps:
     - id: download-go-dist
+      if: inputs.download-dist == 'true'
       shell: bash
       run: |
         PARAM_GOPATH="${{ inputs.gopath }}"
@@ -50,3 +55,12 @@ runs:
         echo "Running go install std for darwin-amd64" && GOOS=darwin GOARCH=amd64 "${GO_DIST_DIR}/bin/go" install std
         echo "Running go install std for darwin-arm64" && GOOS=darwin GOARCH=arm64 "${GO_DIST_DIR}/bin/go" install std
         echo "Running go install std for windows-amd64" && GOOS=windows GOARCH=amd64 "${GO_DIST_DIR}/bin/go" install std
+    - id: set-up-symlinks
+      shell: bash
+      run: |
+        sudo rm /usr/bin/go
+        sudo ln -s "${{ inputs.gopath }}/go-dists/${{ inputs.go-version }}" /usr/local/go
+        echo "/usr/local/go/bin" >> $GITHUB_PATH
+    - id: go-version
+      shell: bash
+      run: go version

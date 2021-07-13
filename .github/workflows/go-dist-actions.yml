@@ -10,11 +10,12 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-#      - id: set-gopath
-#        run: echo "::set-output name=GOPATH::$(go env GOPATH)"
+      - id: set-gopath
+        run: echo "::set-output name=GOPATH::$(go env GOPATH)"
       - id: go-dist-setup
         uses: ./.github/actions/go-dist-version
         with:
+          gopath: ${{ steps.set-gopath.outputs.gopath }}
           go-version: go1.16.6
 #      - id: go-dist-exists
 #        shell: bash
@@ -30,23 +31,30 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ${{ steps.go-dist-setup.outputs.gopath }}/go-dists/${{ steps.go-dist-setup.outputs.go-dist-version }}
+            ${{ steps.set-gopath.outputs.gopath }}/go-dists/${{ steps.go-dist-setup.outputs.go-dist-version }}
           key: ${{ steps.go-dist-setup.outputs.go-dist-version }}
-      - id: download-go-dist
-        if: steps.restore-go-dist-from-cache.outputs.cache-hit != 'true'
+      - id: go-dist-configure
         uses: ./.github/actions/go-dist-download
         with:
-          gopath: ${{ steps.go-dist-setup.outputs.gopath }}
+          download-dist: ${{ steps.restore-go-dist-from-cache.outputs.cache-hit }}
+          gopath: ${{ steps.set-gopath.outputs.gopath }}
           go-version: ${{ steps.go-dist-setup.outputs.go-dist-version }}
-      - id: set-up-symlinks
-        shell: bash
-        run: |
-          sudo rm /usr/bin/go
-          sudo ln -s "${{ steps.set-gopath.outputs.GOPATH }}/go-dists/${{ steps.go-dist-version.outputs.go-dist-version }}" /usr/local/go
-          echo "/usr/local/go/bin" >> $GITHUB_PATH
-      - id: go-version
-        shell: bash
-        run: go version
+
+#      - id: download-go-dist
+#        if: steps.restore-go-dist-from-cache.outputs.cache-hit != 'true'
+#        uses: ./.github/actions/go-dist-download
+#        with:
+#          gopath: ${{ steps.go-dist-setup.outputs.gopath }}
+#          go-version: ${{ steps.go-dist-setup.outputs.go-dist-version }}
+#      - id: set-up-symlinks
+#        shell: bash
+#        run: |
+#          sudo rm /usr/bin/go
+#          sudo ln -s "${{ steps.set-gopath.outputs.GOPATH }}/go-dists/${{ steps.go-dist-version.outputs.go-dist-version }}" /usr/local/go
+#          echo "/usr/local/go/bin" >> $GITHUB_PATH
+#      - id: go-version
+#        shell: bash
+#        run: go version
 
 #      - uses: actions/cache@v2
 #        if: !go-dist-exists

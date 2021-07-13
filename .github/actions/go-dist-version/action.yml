@@ -1,6 +1,14 @@
-name: 'Determine desired Go distribution version'
-description: 'Determines the version of the Go distribution that should be used.'
+name: 'Setup Go distribution'
+description: |
+  Determines the Go distribution version that should be used based on the provided parameter, the go-version file in the
+  repository, and the fallback value. Sets outputs that indicate the version of Go that should be used and whether or
+  not the directory for that distribution exists.
 inputs:
+  gopath:
+    description: |
+      The value of GOPATH.
+    required: false
+    default: "/home/runner/go"
   go-version:
     description: |
       If non-empty, this value is written as the Go version (files in the repository/image are not consulted). The
@@ -15,15 +23,12 @@ inputs:
   go-prev-version:
     description: |
       If greater than 0, modifies the version of Go that would be used to be the first release of the version of Go that
-      is << parameters.go-prev-version >> minor versions smaller. For example, if the version of Go that would be used
-      is "go1.16.5" and << parameters.go-prev-version >> is 1, the version of Go that will be used will be "go1.15".
-      An error is raised if the subtraction would make the minor version less than 0.
+      is go-prev-version minor versions smaller. For example, if the version of Go that would be used is "go1.16.5" and
+      go-prev-version is 1, the version of Go that will be used will be "go1.15". An error is raised if the subtraction
+      would make the minor version less than 0.
     required: false
     default: "0"
 outputs:
-  gopath:
-    description: "Output of 'go env GOPATH'."
-    value: ${{ steps.gopath.outputs.gopath }}
   go-dist-version:
     description: "Version of Go distribution that should be used."
     value: ${{ steps.determine-go-dist-version.outputs.go-dist-version }}
@@ -33,9 +38,6 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - id: gopath
-      shell: bash
-      run: echo "::set-output name=gopath::$(go env GOPATH)"
     - id: determine-go-dist-version
       shell: bash
       run: |
@@ -82,8 +84,11 @@ runs:
       shell: bash
       run: |
         GO_DIST_EXISTS="false"
-        if [ -d "${{ steps.set-gopath.outputs.gopath }}/go-dists/${{ steps.determine-go-dist-version.outputs.go-dist-version }}" ]; then
-          echo "Setting GO_DIST_EXISTS=true"
+        GO_DIST_DIR_PATH="${{ steps.gopath.outputs.gopath }}/go-dists/${{ steps.determine-go-dist-version.outputs.go-dist-version }}"
+        if [ -d "${GO_DIST_DIR_PATH}" ]; then
+          echo "Found directory at ${GO_DIST_DIR_PATH}: setting GO_DIST_EXISTS=true"
           GO_DIST_EXISTS="true"
+        else
+          echo "No directory found at ${GO_DIST_DIR_PATH}"
         fi
         echo "::set-output name=go-dist-exists::$GO_DIST_EXISTS"
