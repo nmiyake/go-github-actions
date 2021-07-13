@@ -39,6 +39,15 @@ jobs:
           echo "Cache hit: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == 1 }}"
         shell: bash
         if: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == 1 }}
+      - id: set-up-symlinks
+        shell: bash
+        run: |
+          sudo rm /usr/bin/go
+          sudo ln -s "${{ steps.set-gopath.outputs.GOPATH }}/go-dists/${{ steps.go-dist-version.outputs.go-dist-version }}" /usr/local/go
+          echo "/usr/local/go/bin" >> $GITHUB_PATH
+      - id: go-version
+        shell: bash
+        run: go version
 
 #      - uses: actions/cache@v2
 #        if: !go-dist-exists
