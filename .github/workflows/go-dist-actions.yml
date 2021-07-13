@@ -8,15 +8,41 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-20.04
+#    env:
+#      DAY_OF_WEEK: Mon
     steps:
       - uses: actions/checkout@v2
       - run: which go
       - run: ls -la /usr/bin/go
       - run: go env
-      - id: go-dist-version
-        uses: ./.github/actions/go-dist-version
-      - run: echo "Go dist version - ${{ steps.go-dist-version.outputs.go-dist-version }}"
-        shell: bash
+      - run: |
+          echo "GOPATH value: $GOPATH"
+#      - id: go-dist-version
+#        uses: ./.github/actions/go-dist-version
+#      - id: go-dist-exists
+#        shell: bash
+#        run: |
+#          GO_DIST_EXISTS=0
+#          if [ -d "${PARAM_GOPATH}/go-dists/${GO_VERSION}" ]; then
+#            GO_DIST_EXISTS=1
+#          fi
+#          echo "::set-output name=GO_DIST_EXISTS::$GO_DIST_EXISTS"
+#      - uses: actions/cache@v2
+#        if: !go-dist-exists
+#        with:
+#          path: |
+#            ~/go/pkg/mod
+#            ~/.cache/go-build
+#            ~/Library/Caches/go-build
+#            %LocalAppData%\go-build
+#          key: ${{ steps.go-dist-version.outputs.go-dist-version }}
+#      - if cache miss:
+#          # download/install go dist at expected location
+#      - set up symlink
+
+
+#      - run: echo "Go dist version - ${{ steps.go-dist-version.outputs.go-dist-version }}"
+#        shell: bash
 
 #      - id: setup-go
 #        uses: ./.github/actions/my-action
