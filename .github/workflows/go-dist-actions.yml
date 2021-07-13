@@ -21,7 +21,7 @@ jobs:
       - id: go-dist-version
         uses: ./.github/actions/go-dist-version
         with:
-          go-version: 1.16.6
+          go-version: go1.16.6
       - id: go-dist-exists
         shell: bash
         run: |
