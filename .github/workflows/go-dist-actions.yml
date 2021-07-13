@@ -24,20 +24,20 @@ jobs:
       - id: go-dist-exists
         shell: bash
         run: |
-          GO_DIST_EXISTS=false
+          GO_DIST_EXISTS=0
           if [ -d "${{ steps.set-gopath.outputs.GOPATH }}/go-dists/${{ steps.go-dist-version.outputs.go-dist-version }}" ]; then
             echo "Setting GO_DIST_EXISTS=true"
-            GO_DIST_EXISTS=true
+            GO_DIST_EXISTS=1
           fi
           echo "::set-output name=GO_DIST_EXISTS::$GO_DIST_EXISTS"
       - run: |
-          echo "Cache miss: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == false }}"
+          echo "Cache miss: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == 0 }}"
         shell: bash
-        if: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == false }}
+        if: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == 0 }}
       - run: |
-          echo "Cache hit: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == true }}"
+          echo "Cache hit: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == 1 }}"
         shell: bash
-        if: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == true }}
+        if: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == 1 }}
 
 #      - uses: actions/cache@v2
 #        if: !go-dist-exists
