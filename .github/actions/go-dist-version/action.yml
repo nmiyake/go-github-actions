@@ -23,7 +23,7 @@ inputs:
 outputs:
   go-dist-version:
     description: "Version of Go distribution that should be used."
-    value: ${{ steps.random-number-generator.outputs.random-id }}
+    value: ${{ steps.determine-go-dist-version.outputs.go-dist-version }}
 runs:
   using: "composite"
   steps:
