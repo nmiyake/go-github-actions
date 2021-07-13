@@ -25,22 +25,25 @@ jobs:
       - id: go-dist-exists
         shell: bash
         run: |
-          GO_DIST_EXISTS=0
+          GO_DIST_EXISTS="false"
           if [ -d "${{ steps.set-gopath.outputs.GOPATH }}/go-dists/${{ steps.go-dist-version.outputs.go-dist-version }}" ]; then
             echo "Setting GO_DIST_EXISTS=true"
-            GO_DIST_EXISTS=1
+            GO_DIST_EXISTS="true"
           fi
           echo "::set-output name=GO_DIST_EXISTS::$GO_DIST_EXISTS"
+      - id: restore-go-dist-from-cache
+        if: steps.go-dist-exists.outputs.GO_DIST_EXISTS != 'true'
+        uses: actions/cache@v2
+        with:
+          path: |
+            ${{ steps.set-gopath.outputs.GOPATH }}/go-dists/${{ steps.go-dist-version.outputs.go-dist-version }}
+          key: ${{ steps.go-dist-version.outputs.go-dist-version }}
       - id: download-go-dist
-        if: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == 0 }}
+        if: steps.restore-go-dist-from-cache.outputs.cache-hit != 'true'
         uses: ./.github/actions/go-dist-download
         with:
           gopath: ${{ steps.set-gopath.outputs.GOPATH }}
           go-version: ${{ steps.go-dist-version.outputs.go-dist-version }}
-      - run: |
-          echo "Cache hit: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == 1 }}"
-        shell: bash
-        if: ${{ steps.go-dist-exists.outputs.GO_DIST_EXISTS == 1 }}
       - id: set-up-symlinks
         shell: bash
         run: |
