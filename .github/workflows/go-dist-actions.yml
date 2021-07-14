@@ -19,7 +19,6 @@ jobs:
         uses: ./.github/actions/go-dist-info
         with:
           gopath: ${{ steps.set-gopath.outputs.gopath }}
-          go-version: go1.16.6
       - id: restore-go-dist-from-cache
         if: steps.go-dist-info.outputs.go-dist-exists != 'true'
         uses: actions/cache@v2
