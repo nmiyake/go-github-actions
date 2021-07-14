@@ -53,6 +53,7 @@ jobs:
         os: [ubuntu-20.04, macos-10.15, windows-2019]
     runs-on: ${{ matrix.os }}
     steps:
+      - uses: actions/checkout@v2
       #####################
       # START Go dist setup
       #####################
@@ -91,7 +92,5 @@ jobs:
           path: |
             ~/.godel
           key: ${{ runner.os }}-godel-${{ hashFiles('godelw', 'godel/config/godel.yml') }}
-      - name: Checkout code
-        uses: actions/checkout@v2
       - name: Test
         run: ./godelw test
