@@ -81,6 +81,7 @@ jobs:
         with:
           gopath: ${{ steps.set-gopath.outputs.gopath }}
           go-version: ${{ steps.go-dist-info.outputs.go-dist-version }}
+          go-dist-os-arch: ${{ matrix.os-arch }}
       #####################
       # END Go dist setup
       #####################
