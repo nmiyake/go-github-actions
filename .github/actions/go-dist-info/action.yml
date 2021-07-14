@@ -51,8 +51,8 @@ runs:
         if [ ! -z "${GO_VERSION}" ]; then
           echo "Go version specified as parameter is ${GO_VERSION}"
         elif [ -f "${PARAM_GO_VERSION_FILE}" ]; then
-          GO_VERSION=$(cat "${PARAM_REPO_GO_VERSION_FILE}")
-          echo "Go version specified in ${PARAM_REPO_GO_VERSION_FILE} is ${GO_VERSION}"
+          GO_VERSION=$(cat "${PARAM_GO_VERSION_FILE}")
+          echo "Go version specified in ${PARAM_GO_VERSION_FILE} is ${GO_VERSION}"
         elif [ -f "${FALLBACK_GO_VERSION_FILE}" ]; then
           GO_VERSION=$(cat "${FALLBACK_GO_VERSION_FILE}")
           echo "Go version specified in ${FALLBACK_GO_VERSION_FILE} is ${GO_VERSION}"
