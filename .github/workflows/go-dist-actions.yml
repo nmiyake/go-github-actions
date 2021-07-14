@@ -10,95 +10,45 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
+      #####################
+      # START Go dist setup
+      #####################
       - id: set-gopath
         run: echo "::set-output name=GOPATH::$(go env GOPATH)"
-      - id: go-dist-setup
-        uses: ./.github/actions/go-dist-version
+      - id: go-dist-info
+        uses: ./.github/actions/go-dist-info
         with:
           gopath: ${{ steps.set-gopath.outputs.gopath }}
           go-version: go1.16.6
-#      - id: go-dist-exists
-#        shell: bash
-#        run: |
-#          GO_DIST_EXISTS="false"
-#          if [ -d "${{ steps.set-gopath.outputs.GOPATH }}/go-dists/${{ steps.go-dist-version.outputs.go-dist-version }}" ]; then
-#            echo "Setting GO_DIST_EXISTS=true"
-#            GO_DIST_EXISTS="true"
-#          fi
-#          echo "::set-output name=GO_DIST_EXISTS::$GO_DIST_EXISTS"
       - id: restore-go-dist-from-cache
-        if: steps.go-dist-setup.outputs.go-dist-exists != 'true'
+        if: steps.go-dist-info.outputs.go-dist-exists != 'true'
         uses: actions/cache@v2
         with:
           path: |
-            ${{ steps.set-gopath.outputs.gopath }}/go-dists/${{ steps.go-dist-setup.outputs.go-dist-version }}
-          key: ${{ steps.go-dist-setup.outputs.go-dist-version }}
-      - id: go-dist-configure
-        uses: ./.github/actions/go-dist-download
+            ${{ steps.set-gopath.outputs.gopath }}/go-dists/${{ steps.go-dist-info.outputs.go-dist-version }}
+          key: ${{ steps.go-dist-info.outputs.go-dist-version }}
+      - id: go-dist-setup
+        uses: ./.github/actions/go-dist-setup
         with:
-          download-dist: ${{ steps.restore-go-dist-from-cache.outputs.cache-hit }}
           gopath: ${{ steps.set-gopath.outputs.gopath }}
-          go-version: ${{ steps.go-dist-setup.outputs.go-dist-version }}
-
-#      - id: download-go-dist
-#        if: steps.restore-go-dist-from-cache.outputs.cache-hit != 'true'
-#        uses: ./.github/actions/go-dist-download
-#        with:
-#          gopath: ${{ steps.go-dist-setup.outputs.gopath }}
-#          go-version: ${{ steps.go-dist-setup.outputs.go-dist-version }}
-#      - id: set-up-symlinks
-#        shell: bash
-#        run: |
-#          sudo rm /usr/bin/go
-#          sudo ln -s "${{ steps.set-gopath.outputs.GOPATH }}/go-dists/${{ steps.go-dist-version.outputs.go-dist-version }}" /usr/local/go
-#          echo "/usr/local/go/bin" >> $GITHUB_PATH
-#      - id: go-version
-#        shell: bash
-#        run: go version
-
-#      - uses: actions/cache@v2
-#        if: !go-dist-exists
-#        with:
-#          path: |
-#            ~/go/pkg/mod
-#            ~/.cache/go-build
-#            ~/Library/Caches/go-build
-#            %LocalAppData%\go-build
-#          key: ${{ steps.go-dist-version.outputs.go-dist-version }}
-#      - if cache miss:
-#          # download/install go dist at expected location
-#      - set up symlink
-
-
-#      - run: echo "Go dist version - ${{ steps.go-dist-version.outputs.go-dist-version }}"
-#        shell: bash
-
-#      - id: setup-go
-#        uses: ./.github/actions/my-action
-#        with:
-#          gopath: /home/runner/go
-#      - run: go version
-#        with:
-#          who-to-greet: 'Mona the Octocat'
-#      - run: echo random-number ${{ steps.foo.outputs.random-number }}
-#        shell: bash
-#      - uses: actions/setup-go@v2
-#        with:
-#          go-version: '1.16.4'
-#      - uses: actions/cache@v2
-#        with:
-#          path: |
-#            ~/go/pkg/mod
-#            ~/.cache/go-build
-#            ~/Library/Caches/go-build
-#            %LocalAppData%\go-build
-#          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-#      - uses: actions/cache@v2
-#        with:
-#          path: |
-#            ~/.godel
-#          key: ${{ runner.os }}-godel-${{ hashFiles('godelw', 'godel/config/godel.yml') }}
-#      - run: ./godelw verify --apply=false
+          go-version: ${{ steps.go-dist-info.outputs.go-dist-version }}
+      #####################
+      # END Go dist setup
+      #####################
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+            ~/Library/Caches/go-build
+            %LocalAppData%\go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.godel
+          key: ${{ runner.os }}-godel-${{ hashFiles('godelw', 'godel/config/godel.yml') }}
+      - run: ./godelw verify --apply=false
 
 #  dist:
 #    runs-on: ubuntu-20.04

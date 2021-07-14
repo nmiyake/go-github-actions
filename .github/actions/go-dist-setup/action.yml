@@ -1,15 +1,12 @@
-name: 'Downloads the Go distribution of the specified version'
-description: 'Downloads the Go distribution of the specified version.'
+name: Set up Go distribution
+description: |
+  Sets up the Go distribution by creating a symlink from /usr/local/go to the Go distribution and updating the PATH
+  accordingly. Downloads the Go distribution of the specified version if it does not already exist.
 inputs:
-  download-dist:
-    description: |
-      If "true", downloads the Go distribution. Otherwise, assumes the Go distribution exists and performs setup.
-    required: true
   gopath:
     description: |
       The $GOPATH value.
-    required: false
-    default: "/go"
+    required: true
   go-version:
     description: |
       The version of the Go distribution to download and set up.
@@ -24,7 +21,6 @@ runs:
   using: "composite"
   steps:
     - id: download-go-dist
-      if: inputs.download-dist == 'true'
       shell: bash
       run: |
         PARAM_GOPATH="${{ inputs.gopath }}"
