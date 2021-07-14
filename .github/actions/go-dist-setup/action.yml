@@ -43,6 +43,9 @@ runs:
           exit
         fi
 
+        ls -la /usr/local/bin/go
+        ls -la /usr/local/bin
+
         # Desired distribution does not already exist and is not in cache: download and ensure that it exists in
         # location that will be cached and in expected location
         echo "${GO_DIST_DIR} does not exist"
