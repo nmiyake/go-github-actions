@@ -17,6 +17,11 @@ inputs:
       the desired Go distribution file (for example, "go1.16.5.linux-amd64.tar.gz").
     required: false
     default: "https://golang.org/dl/"
+  go-dist-os-arch:
+    description: |
+      The os-arch value for the distribution to be downloaded.
+    required: false
+    default: "linux-amd64"
 runs:
   using: "composite"
   steps:
@@ -26,6 +31,7 @@ runs:
         PARAM_GOPATH="${{ inputs.gopath }}"
         PARAM_GO_VERSION="${{ inputs.go-version }}"
         PARAM_GO_DIST_DOWNLOAD_URL_PREFIX="${{ inputs.go-dist-download-url-prefix }}"
+        PARAM_GO_DIST_OS_ARCH="${{ inputs.go-dist-os-arch }}"
 
         # set Go version
         GO_VERSION="${PARAM_GO_VERSION}"
@@ -40,7 +46,7 @@ runs:
         # Desired distribution does not already exist and is not in cache: download and ensure that it exists in
         # location that will be cached and in expected location
         echo "${GO_DIST_DIR} does not exist"
-        echo "Downloading golang distribution from ${PARAM_GO_DIST_DOWNLOAD_URL_PREFIX}${GO_VERSION}.linux-amd64.tar.gz..." && wget -q "${PARAM_GO_DIST_DOWNLOAD_URL_PREFIX}${GO_VERSION}.linux-amd64.tar.gz"
+        echo "Downloading golang distribution from ${PARAM_GO_DIST_DOWNLOAD_URL_PREFIX}${GO_VERSION}.${PARAM_GO_DIST_OS_ARCH}.tar.gz..." && wget -q "${PARAM_GO_DIST_DOWNLOAD_URL_PREFIX}${GO_VERSION}.${PARAM_GO_DIST_OS_ARCH}.tar.gz"
         echo "Expanding archive" && tar xf "${GO_VERSION}.linux-amd64.tar.gz"
         echo "Removing archive" && rm "${GO_VERSION}.linux-amd64.tar.gz"
         echo "Creating ${PARAM_GOPATH}/go-dists directory" && mkdir -p "${PARAM_GOPATH}/go-dists"

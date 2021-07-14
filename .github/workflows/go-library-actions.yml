@@ -50,10 +50,16 @@ jobs:
     strategy:
       matrix:
         go-version: [go1.15.12, go1.16.5]
-        os: [ubuntu-20.04, macos-10.15, windows-2019]
+        os: [ubuntu-20.04, macos-10.15]
+        include:
+          - os: ubuntu-20.04
+            os-arch: linux-amd64
+          - os: macos-10.15
+            os-arch: darwin-amd64
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
+      - run: echo ${{ matrix.os-arch }}
       #####################
       # START Go dist setup
       #####################
