@@ -47,8 +47,8 @@ runs:
         # location that will be cached and in expected location
         echo "${GO_DIST_DIR} does not exist"
         echo "Downloading golang distribution from ${PARAM_GO_DIST_DOWNLOAD_URL_PREFIX}${GO_VERSION}.${PARAM_GO_DIST_OS_ARCH}.tar.gz..." && wget -q "${PARAM_GO_DIST_DOWNLOAD_URL_PREFIX}${GO_VERSION}.${PARAM_GO_DIST_OS_ARCH}.tar.gz"
-        echo "Expanding archive" && tar xf "${GO_VERSION}.linux-amd64.tar.gz"
-        echo "Removing archive" && rm "${GO_VERSION}.linux-amd64.tar.gz"
+        echo "Expanding archive" && tar xf "${GO_VERSION}.${PARAM_GO_DIST_OS_ARCH}.tar.gz"
+        echo "Removing archive" && rm "${GO_VERSION}.${PARAM_GO_DIST_OS_ARCH}.tar.gz"
         echo "Creating ${PARAM_GOPATH}/go-dists directory" && mkdir -p "${PARAM_GOPATH}/go-dists"
         echo "Moving expanded Go distribution to ${GO_DIST_DIR}" && mv go "${GO_DIST_DIR}"
         echo "Setting working directory to ${PARAM_GOPATH} to ensure that 'install std' command doesn't use local go.mod file" && cd "${PARAM_GOPATH}"
