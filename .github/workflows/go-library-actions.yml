@@ -22,7 +22,7 @@ jobs:
         with:
           path: |
             ${{ steps.set-gopath.outputs.gopath }}/go-dists/${{ steps.go-dist-info.outputs.go-dist-version }}
-          key: ${{ steps.go-dist-info.outputs.go-dist-version }}
+          key: ${{ runner.os }}-${{ steps.go-dist-info.outputs.go-dist-version }}
       - id: go-dist-setup
         uses: ./.github/actions/go-dist-setup
         with:
@@ -59,7 +59,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - run: echo ${{ matrix.os-arch }}
       #####################
       # START Go dist setup
       #####################
@@ -76,7 +75,7 @@ jobs:
         with:
           path: |
             ${{ steps.set-gopath.outputs.gopath }}/go-dists/${{ steps.go-dist-info.outputs.go-dist-version }}
-          key: ${{ steps.go-dist-info.outputs.go-dist-version }}
+          key: ${{ runner.os }}-${{ steps.go-dist-info.outputs.go-dist-version }}
       - id: go-dist-setup
         uses: ./.github/actions/go-dist-setup
         with:

@@ -25,7 +25,7 @@ jobs:
         with:
           path: |
             ${{ steps.set-gopath.outputs.gopath }}/go-dists/${{ steps.go-dist-info.outputs.go-dist-version }}
-          key: ${{ steps.go-dist-info.outputs.go-dist-version }}
+          key: ${{ runner.os }}-${{ steps.go-dist-info.outputs.go-dist-version }}
       - id: go-dist-setup
         uses: ./.github/actions/go-dist-setup
         with:
@@ -68,7 +68,7 @@ jobs:
         with:
           path: |
             ${{ steps.set-gopath.outputs.gopath }}/go-dists/${{ steps.go-dist-info.outputs.go-dist-version }}
-          key: ${{ steps.go-dist-info.outputs.go-dist-version }}
+          key: ${{ runner.os }}-${{ steps.go-dist-info.outputs.go-dist-version }}
       - id: go-dist-setup
         uses: ./.github/actions/go-dist-setup
         with:
@@ -120,7 +120,7 @@ jobs:
         with:
           path: |
             ${{ steps.set-gopath.outputs.gopath }}/go-dists/${{ steps.go-dist-info.outputs.go-dist-version }}
-          key: ${{ steps.go-dist-info.outputs.go-dist-version }}
+          key: ${{ runner.os }}-${{ steps.go-dist-info.outputs.go-dist-version }}
       - id: go-dist-setup
         uses: ./.github/actions/go-dist-setup
         with:
